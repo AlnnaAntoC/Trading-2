@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ABC Cargo — Premium Logistics</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════
+   TOKENS
+═══════════════════════════════════ */
+:root{
+  --cream:    #F5F0E8;
+  --cream2:   #EDE8DC;
+  --cream3:   #E0D9CC;
+  --emerald:  #1A5C3A;
+  --emerald2: #236B45;
+  --emerald3: #0F3D27;
+  --gold:     #C8A84B;
+  --gold2:    #E2C06A;
+  --ink:      #1A1A18;
+  --ink2:     #2C2C2A;
+  --muted:    #6B6B60;
+  --muted2:   #9A9A8C;
+  --white:    #FFFFFF;
+  --card:     #FDFAF4;
+  --border:   rgba(26,92,58,0.12);
+  --border2:  rgba(26,26,24,0.1);
+  --ff-serif: 'DM Serif Display', serif;
+  --ff-inst:  'Instrument Serif', serif;
+  --ff-sans:  'DM Sans', sans-serif;
+  --r: 4px;
+  --r2: 8px;
+  --ease: cubic-bezier(.25,.46,.45,.94);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:var(--ff-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--cream);}
+::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:2px;}
+
+/* Page system */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;animation:pageIn .5s var(--ease);}
+@keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════
+   NAVBAR
+═══════════════════════════════════ */
+nav{
+  position:fixed;inset:0 0 auto;z-index:9000;
+  background:rgba(245,240,232,0.94);
+  backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:68px;
+}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;}
+.nav-brand-mark{
+  width:36px;height:36px;background:var(--emerald);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-serif);font-size:.9rem;color:var(--cream);letter-spacing:1px;
+}
+.nav-brand-name{font-family:var(--ff-serif);font-size:1.4rem;color:var(--ink);letter-spacing:.5px;line-height:1;}
+.nav-brand-tag{font-family:var(--ff-sans);font-size:.58rem;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--muted);line-height:1;margin-top:1px;}
+
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none;}
+.nav-links>li>a,.nav-links>li>button{
+  font-family:var(--ff-sans);font-size:.8rem;font-weight:500;letter-spacing:.3px;
+  color:var(--muted);background:none;border:none;padding:8px 14px;
+  cursor:pointer;text-decoration:none;border-radius:var(--r);
+  transition:color .2s,background .2s;
+}
+.nav-links>li>a:hover,.nav-links>li>button:hover,
+.nav-links>li>a.active,.nav-links>li>button.active{color:var(--emerald);background:rgba(26,92,58,0.07);}
+
+/* Dropdown */
+.dd-w{position:relative;}
+.dd-tog{display:flex;align-items:center;gap:5px;}
+.dd-chev{transition:transform .25s;}
+.dd-w:hover .dd-chev{transform:rotate(180deg);}
+.dd-panel{
+  position:absolute;top:calc(100%+10px);left:50%;
+  transform:translateX(-50%) translateY(-8px);
+  min-width:260px;
+  background:var(--white);
+  border:1px solid var(--border2);
+  border-radius:var(--r2);
+  box-shadow:0 16px 48px rgba(26,26,24,.14);
+  overflow:hidden;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;
+}
+.dd-w:hover .dd-panel{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0);}
+.dd-panel a{
+  display:flex;align-items:center;gap:10px;padding:12px 18px;
+  font-family:var(--ff-sans);font-size:.8rem;font-weight:500;
+  color:var(--muted);text-decoration:none;
+  border-bottom:1px solid rgba(26,26,24,.06);
+  transition:background .18s,color .18s;
+}
+.dd-panel a:last-child{border-bottom:none;}
+.dd-panel a::after{display:none;}
+.dd-panel a:hover{background:rgba(26,92,58,.06);color:var(--emerald);}
+.dd-panel a .dd-pip{width:5px;height:5px;border-radius:50%;background:var(--emerald);opacity:.5;flex-shrink:0;}
+.dd-panel a:hover .dd-pip{opacity:1;}
+
+.nav-cta{background:var(--emerald)!important;color:var(--cream)!important;font-weight:600!important;border-radius:var(--r)!important;padding:9px 20px!important;}
+.nav-cta:hover{background:var(--emerald2)!important;color:var(--white)!important;}
+
+.ham{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.ham span{width:24px;height:1.5px;background:var(--ink);transition:all .3s;display:block;}
+.mob-nav{display:none;position:fixed;inset:68px 0 0;background:var(--cream);z-index:8999;padding:32px 5%;overflow-y:auto;border-top:1px solid var(--border);}
+.mob-nav.open{display:block;}
+.mob-nav a,.mob-nav button{display:block;width:100%;font-family:var(--ff-sans);font-size:1.15rem;font-weight:500;color:var(--ink);background:none;border:none;padding:14px 0;text-align:left;cursor:pointer;text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;}
+.mob-nav a:hover,.mob-nav button:hover{color:var(--emerald);}
+.mob-sub{font-size:.88rem!important;color:var(--muted)!important;padding-left:14px!important;}
+
+/* ═══════════════════════════════════
+   HELPERS
+═══════════════════════════════════ */
+.section{padding:110px 5%;}
+.container{padding:0 5%;}
+
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--ff-sans);font-size:.68rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--emerald);border:1px solid rgba(26,92,58,.25);
+  padding:4px 12px;border-radius:100px;margin-bottom:18px;
+}
+
+h1{font-family:var(--ff-serif);font-size:clamp(3rem,7vw,6.5rem);line-height:.97;letter-spacing:-.5px;color:var(--ink);}
+h2{font-family:var(--ff-serif);font-size:clamp(2rem,4.5vw,4rem);line-height:1.05;color:var(--ink);}
+h3{font-family:var(--ff-sans);font-size:1.15rem;font-weight:600;color:var(--ink);}
+p{color:var(--muted);line-height:1.8;font-size:.95rem;}
+.em{color:var(--emerald);}
+.italic{font-style:italic;font-family:var(--ff-inst);}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-sans);font-size:.8rem;font-weight:600;letter-spacing:.5px;padding:13px 28px;border-radius:var(--r);cursor:pointer;text-decoration:none;transition:all .25s var(--ease);border:none;}
+.btn-em{background:var(--emerald);color:var(--cream);}
+.btn-em:hover{background:var(--emerald2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,92,58,.25);}
+.btn-outline{background:transparent;color:var(--ink);border:1px solid var(--border2);}
+.btn-outline:hover{border-color:var(--emerald);color:var(--emerald);background:rgba(26,92,58,.05);}
+.btn-cream{background:var(--cream);color:var(--emerald);}
+.btn-cream:hover{background:var(--cream2);transform:translateY(-2px);}
+.btn-gold{background:var(--gold);color:var(--ink);}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);}
+
+.hr{height:1px;background:var(--border);margin:0;}
+
+/* Image */
+.img-fill{width:100%;height:100%;object-fit:cover;display:block;}
+.img-shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,26,24,.7) 0%,rgba(26,26,24,.15) 55%,transparent 100%);}
+.img-shade-side{position:absolute;inset:0;background:linear-gradient(to right,rgba(245,240,232,.98) 30%,rgba(245,240,232,.6) 55%,rgba(245,240,232,.0) 100%);}
+
+/* ═══════════════════════════════════
+   HOME — HERO (editorial split)
+═══════════════════════════════════ */
+.hero{
+  min-height:100vh;padding-top:68px;
+  display:grid;grid-template-columns:55% 45%;
+  position:relative;overflow:hidden;
+}
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 6% 80px 5%;
+  background:var(--cream);
+  position:relative;
+}
+.hero-left::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:var(--border);}
+.hero-eyebrow{font-family:var(--ff-sans);font-size:.68rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--gold);}
+.hero h1{margin-bottom:28px;}
+.hero-lead{font-size:1rem;max-width:460px;margin-bottom:44px;line-height:1.85;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:56px;}
+.hero-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--border);padding-top:40px;}
+.kpi{padding-right:24px;border-right:1px solid var(--border);}
+.kpi:last-child{border-right:none;padding-left:24px;padding-right:0;}
+.kpi:nth-child(2){padding-left:24px;}
+.kpi-val{font-family:var(--ff-serif);font-size:2.4rem;color:var(--emerald);line-height:1;}
+.kpi-label{font-family:var(--ff-sans);font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin-top:4px;}
+
+.hero-right{position:relative;overflow:hidden;}
+.hero-right img{width:100%;height:100%;object-fit:cover;}
+.hero-right::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,240,232,.15),rgba(26,92,58,.08));}
+.hero-badge{
+  position:absolute;bottom:32px;left:32px;
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:18px 22px;
+  display:flex;align-items:center;gap:14px;
+}
+.hb-icon{width:40px;height:40px;background:var(--emerald);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.hb-val{font-family:var(--ff-serif);font-size:1.4rem;color:var(--emerald);line-height:1;}
+.hb-lbl{font-family:var(--ff-sans);font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.hero-cert{
+  position:absolute;top:32px;right:32px;
+  background:var(--gold);color:var(--ink);
+  border-radius:var(--r);
+  padding:7px 14px;
+  font-family:var(--ff-sans);font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
+
+/* Ticker */
+.ticker-bar{background:var(--emerald);padding:14px 5%;overflow:hidden;display:flex;}
+.ticker-track{display:flex;gap:64px;animation:tickerX 24s linear infinite;white-space:nowrap;}
+@keyframes tickerX{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-family:var(--ff-sans);font-size:.72rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,.7);display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.ticker-item::before{content:'◇';font-size:.55rem;color:var(--gold);}
+
+/* ═══════════════════════════════════
+   ABOUT STRIP (home)
+═══════════════════════════════════ */
+.about-strip{display:grid;grid-template-columns:1fr 1fr;min-height:560px;}
+.as-img{position:relative;overflow:hidden;}
+.as-img img{width:100%;height:100%;object-fit:cover;}
+.as-img::after{content:'';position:absolute;inset:0;background:rgba(26,26,24,.2);}
+.as-img-label{position:absolute;bottom:28px;left:28px;font-family:var(--ff-serif);font-size:1.6rem;color:var(--cream);font-style:italic;line-height:1.2;z-index:1;}
+.as-content{background:var(--emerald);padding:80px 60px;display:flex;flex-direction:column;justify-content:center;gap:24px;}
+.as-content .tag{color:var(--gold);border-color:rgba(200,168,75,.3);}
+.as-content h2{color:var(--cream);}
+.as-content p{color:rgba(245,240,232,.7);}
+.as-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:8px 0;}
+.as-list li{font-family:var(--ff-sans);font-size:.88rem;color:rgba(245,240,232,.8);display:flex;align-items:center;gap:10px;}
+.as-list li::before{content:'';width:16px;height:1px;background:var(--gold);flex-shrink:0;}
+
+/* Mosaic ribbon */
+.mosaic{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:320px;gap:3px;}
+.mos-cell{overflow:hidden;position:relative;}
+.mos-cell:first-child{grid-column:span 2;}
+.mos-cell img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);}
+.mos-cell:hover img{transform:scale(1.06);}
+.mos-cell-label{position:absolute;bottom:16px;left:16px;font-family:var(--ff-sans);font-size:.65rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--cream);z-index:1;opacity:.8;}
+
+/* Services cards */
+.svc-section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:56px;flex-wrap:wrap;gap:20px;}
+.svc-section-head h2{margin-bottom:8px;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);}
+.svc-card{background:var(--card);padding:0;overflow:hidden;cursor:pointer;transition:all .3s var(--ease);position:relative;}
+.svc-card:hover{background:var(--white);box-shadow:0 12px 36px rgba(26,26,24,.12);}
+.svc-card-img{height:190px;overflow:hidden;position:relative;}
+.svc-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;}
+.svc-card:hover .svc-card-img img{transform:scale(1.06);}
+.svc-card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--card) 0%,transparent 55%);transition:background .3s;}
+.svc-card:hover .svc-card-img::after{background:linear-gradient(to top,var(--white) 0%,transparent 55%);}
+.svc-card-body{padding:28px 30px 34px;}
+.svc-card-num{font-family:var(--ff-serif);font-size:3.5rem;color:rgba(26,92,58,.1);line-height:1;margin-bottom:10px;}
+.svc-card h3{margin-bottom:10px;font-size:1.05rem;}
+.svc-card p{font-size:.85rem;}
+.svc-card-arrow{margin-top:18px;display:flex;align-items:center;gap:6px;font-family:var(--ff-sans);font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--emerald);opacity:0;transition:opacity .25s;}
+.svc-card:hover .svc-card-arrow{opacity:1;}
+.svc-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--emerald);transform:scaleX(0);transition:transform .3s;transform-origin:left;}
+.svc-card:hover::before{transform:scaleX(1);}
+
+/* Testimonial / Quote band */
+.quote-band{background:var(--ink);padding:96px 5%;text-align:center;position:relative;overflow:hidden;}
+.quote-band-bg{position:absolute;inset:0;opacity:.08;}
+.quote-band-bg img{width:100%;height:100%;object-fit:cover;}
+.quote-text{font-family:var(--ff-inst);font-size:clamp(1.6rem,4vw,3rem);color:var(--cream);line-height:1.3;max-width:800px;margin:0 auto 28px;font-style:italic;position:relative;}
+.quote-text::before{content:'"';font-family:var(--ff-serif);font-size:8rem;color:var(--gold);opacity:.25;position:absolute;top:-30px;left:-30px;line-height:1;}
+.quote-author{font-family:var(--ff-sans);font-size:.78rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);position:relative;}
+
+/* Stats 3-col */
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--cream2);}
+.s3-cell{padding:56px 48px;border-right:1px solid var(--border);transition:background .2s;}
+.s3-cell:last-child{border-right:none;}
+.s3-cell:hover{background:var(--cream3);}
+.s3-num{font-family:var(--ff-serif);font-size:3.5rem;color:var(--emerald);line-height:1;margin-bottom:10px;}
+.s3-title{font-family:var(--ff-sans);font-size:.78rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin-bottom:6px;}
+.s3-desc{font-size:.85rem;}
+
+/* CTA band */
+.cta-band{display:grid;grid-template-columns:1fr 1fr;}
+.cta-band-img{position:relative;min-height:440px;overflow:hidden;}
+.cta-band-img img{width:100%;height:100%;object-fit:cover;}
+.cta-band-img::after{content:'';position:absolute;inset:0;background:rgba(26,26,24,.3);}
+.cta-band-content{background:var(--emerald3);padding:80px 60px;display:flex;flex-direction:column;justify-content:center;gap:24px;}
+.cta-band-content .tag{color:var(--gold);border-color:rgba(200,168,75,.25);}
+.cta-band-content h2{color:var(--cream);}
+.cta-band-content p{color:rgba(245,240,232,.65);}
+.cta-feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;}
+.cta-feat{font-family:var(--ff-sans);font-size:.82rem;color:rgba(245,240,232,.75);display:flex;align-items:center;gap:8px;}
+.cta-feat::before{content:'✓';color:var(--gold);}
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* ═══════════════════════════════════
+   PAGE HERO (inner)
+═══════════════════════════════════ */
+.page-hero{min-height:50vh;display:flex;flex-direction:column;justify-content:flex-end;padding:110px 5% 60px;position:relative;overflow:hidden;background:var(--ink);}
+.ph-img{position:absolute;inset:0;}
+.ph-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.55);}
+.ph-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(26,26,24,.92) 30%,rgba(26,26,24,.4) 100%);}
+.ph-content{position:relative;}
+.ph-content .tag{color:var(--gold);border-color:rgba(200,168,75,.3);}
+.ph-content h1{color:var(--cream);margin-top:12px;margin-bottom:16px;}
+.ph-content p{color:rgba(245,240,232,.65);max-width:500px;}
+
+/* ═══════════════════════════════════
+   ABOUT PAGE
+═══════════════════════════════════ */
+.mission-wrap{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.mission-img-box{border-radius:var(--r2);overflow:hidden;height:400px;position:relative;}
+.mission-img-box img{width:100%;height:100%;object-fit:cover;}
+.mission-img-box-label{position:absolute;bottom:24px;left:24px;font-family:var(--ff-inst);font-size:1.4rem;color:var(--cream);font-style:italic;z-index:1;}
+.mission-img-box::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(26,26,24,.55),transparent 50%);}
+
+.about-feature-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border2);}
+.afr-cell{background:var(--card);padding:36px 28px;}
+.afr-icon{font-size:2rem;margin-bottom:16px;}
+.afr-cell h3{font-size:.95rem;margin-bottom:8px;}
+.afr-cell p{font-size:.84rem;}
+
+.team-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.team-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:all .3s;}
+.team-card:hover{box-shadow:0 8px 28px rgba(26,26,24,.1);border-color:rgba(26,92,58,.2);}
+.team-photo{height:260px;overflow:hidden;position:relative;}
+.team-photo img{width:100%;height:100%;object-fit:cover;filter:sepia(8%);transition:transform .4s,filter .3s;}
+.team-card:hover .team-photo img{transform:scale(1.04);filter:sepia(0%);}
+.team-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(245,240,232,.9) 0%,transparent 50%);}
+.team-info{padding:18px 20px;}
+.team-name{font-family:var(--ff-serif);font-size:1.1rem;color:var(--ink);}
+.team-role{font-size:.75rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--emerald);margin-top:4px;}
+
+.tl-wrap{display:flex;flex-direction:column;gap:0;padding-left:36px;position:relative;}
+.tl-wrap::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--emerald),rgba(26,92,58,.1));}
+.tl-entry{position:relative;padding-bottom:44px;}
+.tl-entry::before{content:'';position:absolute;left:-41px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 3px rgba(26,92,58,.15);}
+.tl-yr{font-family:var(--ff-serif);font-size:2.2rem;color:var(--emerald);line-height:1;}
+.tl-title{font-family:var(--ff-sans);font-size:1rem;font-weight:600;color:var(--ink);margin:6px 0 4px;}
+.tl-desc{font-size:.86rem;}
+
+.nums-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.nw-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:32px 28px;transition:all .25s;}
+.nw-tile:hover{border-color:var(--emerald);background:var(--white);}
+.nw-val{font-family:var(--ff-serif);font-size:3rem;color:var(--emerald);line-height:1;margin-bottom:6px;}
+.nw-label{font-family:var(--ff-sans);font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+/* ═══════════════════════════════════
+   SERVICES PAGE
+═══════════════════════════════════ */
+.big-svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border2);}
+.bsg-card{background:var(--card);cursor:pointer;transition:all .3s;overflow:hidden;}
+.bsg-card:hover{background:var(--white);box-shadow:0 16px 48px rgba(26,26,24,.12);}
+.bsg-img{height:260px;overflow:hidden;position:relative;}
+.bsg-img img{width:100%;height:100%;object-fit:cover;transition:transform .55s;}
+.bsg-card:hover .bsg-img img{transform:scale(1.05);}
+.bsg-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--card) 0%,transparent 50%);transition:background .3s;}
+.bsg-card:hover .bsg-img::after{background:linear-gradient(to top,var(--white) 0%,transparent 50%);}
+.bsg-body{padding:40px 44px 48px;}
+.bsg-num{font-family:var(--ff-serif);font-size:4.5rem;color:rgba(26,92,58,.09);line-height:1;margin-bottom:8px;}
+.bsg-body h3{font-size:1.3rem;margin-bottom:12px;}
+.bsg-body p{font-size:.9rem;}
+.bsg-link{margin-top:18px;display:flex;align-items:center;gap:6px;font-family:var(--ff-sans);font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--emerald);}
+
+/* ═══════════════════════════════════
+   SERVICE DETAIL
+═══════════════════════════════════ */
+.sd-wrap{display:grid;grid-template-columns:2fr 1fr;gap:72px;}
+.sd-body h3{font-size:1.2rem;margin-bottom:14px;}
+.sd-body p{margin-bottom:18px;font-size:.95rem;}
+.sd-img-box{border-radius:var(--r2);overflow:hidden;height:300px;margin:36px 0;position:relative;}
+.sd-img-box img{width:100%;height:100%;object-fit:cover;}
+.sd-img-box::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(245,240,232,.2),transparent);}
+.sd-feat-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin:28px 0;}
+.sd-feat-list li{display:flex;align-items:flex-start;gap:12px;font-size:.92rem;color:var(--ink2);}
+.sd-feat-list li::before{content:'';width:16px;height:1px;background:var(--emerald);margin-top:12px;flex-shrink:0;}
+
+.sd-sidebar{display:flex;flex-direction:column;gap:20px;padding-top:12px;}
+.sb-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:26px;}
+.sb-panel h3{font-family:var(--ff-sans);font-size:.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--emerald);margin-bottom:16px;}
+.sp-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.sp-list li{font-size:.86rem;color:var(--muted);padding-left:12px;border-left:2px solid rgba(26,92,58,.2);}
+.sb-img{border-radius:var(--r2);overflow:hidden;height:180px;}
+.sb-img img{width:100%;height:100%;object-fit:cover;}
+.sb-cta{background:var(--emerald);border-radius:var(--r2);padding:26px;}
+.sb-cta h3{color:var(--cream);font-size:.9rem;margin-bottom:10px;letter-spacing:1.5px;text-transform:uppercase;}
+.sb-cta p{color:rgba(245,240,232,.65);font-size:.84rem;margin-bottom:18px;}
+
+.oc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:72px;}
+.oc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:all .3s;}
+.oc-card:hover{border-color:var(--emerald);transform:translateY(-4px);background:var(--white);}
+.oc-img{height:150px;overflow:hidden;position:relative;}
+.oc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.oc-card:hover .oc-img img{transform:scale(1.06);}
+.oc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--card) 0%,transparent 55%);transition:background .3s;}
+.oc-card:hover .oc-img::after{background:linear-gradient(to top,var(--white) 0%,transparent 55%);}
+.oc-body{padding:20px;}
+.oc-body h3{font-size:.92rem;margin-bottom:6px;}
+.oc-body p{font-size:.82rem;}
+
+/* ═══════════════════════════════════
+   CONTACT
+═══════════════════════════════════ */
+.contact-wrap{display:grid;grid-template-columns:1fr 1.6fr;gap:72px;align-items:start;}
+.contact-info{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:40px;}
+.ci-group{margin-bottom:26px;}
+.ci-group:last-child{margin-bottom:0;}
+.ci-label{font-family:var(--ff-sans);font-size:.68rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--emerald);margin-bottom:6px;}
+.ci-value{font-size:.92rem;color:var(--ink2);line-height:1.7;}
+.ci-hr{height:1px;background:var(--border);margin:20px 0;}
+.soc-row{display:flex;gap:8px;margin-top:10px;}
+.soc-btn{width:36px;height:36px;border-radius:var(--r);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;text-decoration:none;font-size:.9rem;transition:all .2s;}
+.soc-btn:hover{border-color:var(--emerald);color:var(--emerald);background:rgba(26,92,58,.05);}
+.contact-office-img{border-radius:var(--r2);overflow:hidden;height:200px;margin-top:20px;position:relative;}
+.contact-office-img img{width:100%;height:100%;object-fit:cover;}
+.contact-office-img::after{content:'';position:absolute;inset:0;background:rgba(26,26,24,.2);}
+.office-img-label{position:absolute;bottom:16px;left:16px;font-family:var(--ff-inst);font-size:1rem;color:var(--cream);font-style:italic;z-index:1;}
+
+.form-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:40px;}
+.form-head{font-family:var(--ff-serif);font-size:1.5rem;color:var(--ink);margin-bottom:28px;}
+.cform{display:flex;flex-direction:column;gap:18px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field label{font-family:var(--ff-sans);font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.field input,.field textarea,.field select{background:var(--cream);border:1px solid var(--border);color:var(--ink);padding:12px 16px;border-radius:var(--r);font-family:var(--ff-sans);font-size:.9rem;outline:none;resize:vertical;transition:border-color .2s;-webkit-appearance:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--emerald);background:var(--white);box-shadow:0 0 0 3px rgba(26,92,58,.08);}
+.field select option{background:var(--white);}
+.form-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.form-note{font-size:.78rem;color:var(--muted2);}
+.fsuccess{background:rgba(26,92,58,.08);border:1px solid rgba(26,92,58,.25);border-radius:var(--r);padding:14px 18px;display:none;font-family:var(--ff-sans);font-size:.88rem;color:var(--emerald);align-items:center;gap:10px;}
+.fsuccess.show{display:flex;}
+
+.map-wrap{margin-top:72px;border-radius:var(--r2);overflow:hidden;height:320px;position:relative;}
+.map-wrap img{width:100%;height:100%;object-fit:cover;filter:sepia(30%) brightness(.7) saturate(.8);}
+.map-wrap::after{content:'';position:absolute;inset:0;background:rgba(26,26,24,.3);}
+.map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:1;}
+.map-pin .pin{font-size:2.8rem;}
+.map-pin p{font-family:var(--ff-sans);font-size:.7rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--cream);margin-top:8px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+footer{background:var(--ink2);padding:72px 5% 36px;border-top:1px solid rgba(255,255,255,.06);}
+.footer-em-bar{height:3px;background:linear-gradient(90deg,var(--emerald),var(--gold),rgba(200,168,75,.1));margin-bottom:72px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:56px;margin-bottom:56px;}
+.footer-brand-desc{font-size:.86rem;color:rgba(245,240,232,.45);margin-top:16px;max-width:240px;line-height:1.7;}
+.footer-col h4{font-family:var(--ff-sans);font-size:.68rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-col ul li a,.footer-col ul li button{font-size:.85rem;color:rgba(245,240,232,.4);text-decoration:none;background:none;border:none;cursor:pointer;font-family:var(--ff-sans);transition:color .2s;padding:0;}
+.footer-col ul li a:hover,.footer-col ul li button:hover{color:var(--cream);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:.78rem;color:rgba(245,240,232,.3);}
+.footer-bottom span{color:var(--emerald);}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media(max-width:1100px){
+  .hero{grid-template-columns:1fr;min-height:auto;}
+  .hero-right{height:420px;}
+  .about-strip{grid-template-columns:1fr;}
+  .as-img{height:340px;}
+  .cta-band{grid-template-columns:1fr;}
+  .cta-band-img{height:300px;}
+  .stats-3{grid-template-columns:1fr 1fr 1fr;}
+  .mission-wrap{grid-template-columns:1fr;gap:48px;}
+  .about-feature-row{grid-template-columns:repeat(2,1fr);}
+  .team-wrap{grid-template-columns:repeat(2,1fr);}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:36px;}
+  .sd-wrap{grid-template-columns:1fr;gap:48px;}
+  .big-svc-grid{grid-template-columns:1fr;}
+  .contact-wrap{grid-template-columns:1fr;gap:40px;}
+  .mosaic{grid-template-rows:220px;grid-template-columns:repeat(4,1fr);}
+  .mos-cell:first-child{grid-column:span 2;}
+}
+@media(max-width:768px){
+  nav .nav-links{display:none;}
+  .ham{display:flex;}
+  .svc-grid{grid-template-columns:1fr;}
+  .big-svc-grid{grid-template-columns:1fr;}
+  .oc-grid{grid-template-columns:1fr 1fr;}
+  .about-feature-row{grid-template-columns:1fr;}
+  .team-wrap{grid-template-columns:1fr 1fr;}
+  .stats-3{grid-template-columns:1fr;}
+  .s3-cell{border-right:none;border-bottom:1px solid var(--border);}
+  .s3-cell:last-child{border-bottom:none;}
+  .footer-grid{grid-template-columns:1fr;}
+  .nums-wrap{grid-template-columns:1fr 1fr;}
+  .frow{grid-template-columns:1fr;}
+  .hero-kpis{grid-template-columns:1fr;}
+  .kpi{border-right:none;border-bottom:1px solid var(--border);padding:12px 0;padding-left:0!important;}
+  .kpi:last-child{border-bottom:none;}
+  .mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+  .mos-cell:first-child{grid-column:span 2;height:220px;}
+  .mos-cell{height:160px;}
+}
+@media(max-width:480px){
+  .oc-grid{grid-template-columns:1fr;}
+  .nums-wrap{grid-template-columns:1fr;}
+  .team-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand" onclick="sw('home')">
+    <div class="nav-brand-mark">S</div>
+    <div>
+      <div class="nav-brand-name">SWIFT</div>
+      <div class="nav-brand-tag">Cargo Group</div>
+    </div>
+  </div>
+  <ul class="nav-links" id="dnav">
+    <li><a href="#" onclick="sw('home');return false;" data-page="home">Home</a></li>
+    <li><a href="#" onclick="sw('about');return false;" data-page="about">About</a></li>
+    <li class="dd-w">
+      <button class="dd-tog" data-page="services" onclick="sw('services');return false;">
+        Services
+        <svg class="dd-chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="dd-panel">
+        <a href="#" onclick="sw('s-freight');return false;"><span class="dd-pip"></span>Global Freight</a>
+        <a href="#" onclick="sw('s-warehouse');return false;"><span class="dd-pip"></span>Warehousing & Storage</a>
+        <a href="#" onclick="sw('s-supply');return false;"><span class="dd-pip"></span>Supply Chain</a>
+        <a href="#" onclick="sw('s-lastmile');return false;"><span class="dd-pip"></span>Last Mile Delivery</a>
+        <a href="#" onclick="sw('s-customs');return false;"><span class="dd-pip"></span>Customs & Trade</a>
+        <a href="#" onclick="sw('s-cold');return false;"><span class="dd-pip"></span>Cold Chain Logistics</a>
+      </div>
+    </li>
+    <li><a href="#" onclick="sw('contact');return false;" data-page="contact">Contact</a></li>
+    <li><button class="nav-cta btn" onclick="sw('contact');return false;">Get a Quote</button></li>
+  </ul>
+  <button class="ham" onclick="togMob()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mob-nav" id="mobnav">
+  <a href="#" onclick="sw('home');togMob();return false;">Home</a>
+  <a href="#" onclick="sw('about');togMob();return false;">About</a>
+  <a href="#" onclick="sw('services');togMob();return false;">Services</a>
+  <a href="#" class="mob-sub" onclick="sw('s-freight');togMob();return false;">↳ Global Freight</a>
+  <a href="#" class="mob-sub" onclick="sw('s-warehouse');togMob();return false;">↳ Warehousing & Storage</a>
+  <a href="#" class="mob-sub" onclick="sw('s-supply');togMob();return false;">↳ Supply Chain</a>
+  <a href="#" class="mob-sub" onclick="sw('s-lastmile');togMob();return false;">↳ Last Mile Delivery</a>
+  <a href="#" class="mob-sub" onclick="sw('s-customs');togMob();return false;">↳ Customs & Trade</a>
+  <a href="#" class="mob-sub" onclick="sw('s-cold');togMob();return false;">↳ Cold Chain Logistics</a>
+  <a href="#" onclick="sw('contact');togMob();return false;">Contact</a>
+</div>
+
+<!-- ══════════════════════════════
+     HOME
+══════════════════════════════ -->
+<div id="page-home" class="page">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Premium Logistics Since 1998</div>
+      <h1>Moving Cargo,<br><span class="em">The Right</span><br><span class="italic">Way.</span></h1>
+      <p class="hero-lead">Swift Cargo Group delivers world-class freight, warehousing, and supply chain solutions across 130+ countries — built on trust, precision, and decades of expertise.</p>
+      <div class="hero-actions">
+        <button class="btn btn-em" onclick="sw('services')">Our Services →</button>
+        <button class="btn btn-outline" onclick="sw('contact')">Request a Quote</button>
+      </div>
+      <div class="hero-kpis">
+        <div class="kpi"><div class="kpi-val">25+</div><div class="kpi-label">Years Active</div></div>
+        <div class="kpi"><div class="kpi-val">130+</div><div class="kpi-label">Countries</div></div>
+        <div class="kpi"><div class="kpi-val">99.5%</div><div class="kpi-label">On-Time Rate</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1100&auto=format&q=85" alt="Cargo ship at sea"/>
+      <div class="hero-cert">ISO 9001 Certified</div>
+      <div class="hero-badge">
+        <div class="hb-icon">🌍</div>
+        <div>
+          <div class="hb-val">45K+</div>
+          <div class="hb-lbl">Shipments / Year</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-track">
+      <span class="ticker-item">Global Freight</span><span class="ticker-item">Warehousing & Storage</span><span class="ticker-item">Supply Chain Solutions</span><span class="ticker-item">Last Mile Delivery</span><span class="ticker-item">Customs & Trade</span><span class="ticker-item">Cold Chain Logistics</span>
+      <span class="ticker-item">Global Freight</span><span class="ticker-item">Warehousing & Storage</span><span class="ticker-item">Supply Chain Solutions</span><span class="ticker-item">Last Mile Delivery</span><span class="ticker-item">Customs & Trade</span><span class="ticker-item">Cold Chain Logistics</span>
+    </div>
+  </div>
+
+  <!-- About strip -->
+  <div class="about-strip">
+    <div class="as-img">
+      <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=900&auto=format&q=80" alt="Warehouse"/>
+      <div class="as-img-label">"Precision<br>in every mile."</div>
+    </div>
+    <div class="as-content">
+      <div class="tag">Who We Are</div>
+      <h2 style="color:var(--cream)">A Legacy of<br><span style="font-style:italic;font-family:var(--ff-inst)">Reliable</span> Logistics</h2>
+      <p>Since 1998, Swift Cargo Group has been the partner of choice for businesses that demand reliable, responsive, and expertly managed logistics. From a single office in the Gulf to a global network, our commitment has never wavered.</p>
+      <ul class="as-list">
+        <li>25 years of continuous operation</li>
+        <li>4,200+ logistics professionals worldwide</li>
+        <li>Fully owned fleet of 700+ vehicles</li>
+        <li>Carrier-neutral, client-first approach</li>
+        <li>Dedicated account management for all clients</li>
+      </ul>
+      <div>
+        <button class="btn btn-gold" onclick="sw('about')">Our Full Story →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo mosaic -->
+  <div class="mosaic">
+    <div class="mos-cell">
+      <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&q=80" alt="Port" loading="lazy"/>
+      <div class="mos-cell-label">Sea Freight</div>
+    </div>
+    <div class="mos-cell">
+      <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&auto=format&q=80" alt="Air cargo" loading="lazy"/>
+      <div class="mos-cell-label">Air Freight</div>
+    </div>
+    <div class="mos-cell">
+      <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&auto=format&q=80" alt="Road" loading="lazy"/>
+      <div class="mos-cell-label">Road Freight</div>
+    </div>
+    <div class="mos-cell">
+      <img src="https://images.unsplash.com/photo-1591792111137-5b8219d5fad6?w=500&auto=format&q=80" alt="Warehouse" loading="lazy"/>
+      <div class="mos-cell-label">Warehousing</div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="svc-section-head">
+      <div>
+        <div class="tag">Our Services</div>
+        <h2>Six Ways We<br><span class="em italic" style="font-family:var(--ff-inst)">Serve You</span></h2>
+      </div>
+      <button class="btn btn-outline" onclick="sw('services')">View All Services →</button>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card" onclick="sw('s-freight')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&auto=format&q=75" alt="Freight" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">01</div><h3>Global Freight</h3><p>Air, sea, and road freight with real-time tracking across 130+ countries.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+      <div class="svc-card" onclick="sw('s-warehouse')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&auto=format&q=75" alt="Warehouse" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">02</div><h3>Warehousing & Storage</h3><p>Smart, connected warehouses with full WMS visibility and 3PL fulfillment.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+      <div class="svc-card" onclick="sw('s-supply')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&auto=format&q=75" alt="Supply chain" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">03</div><h3>Supply Chain</h3><p>End-to-end supply chain management with analytics and optimization consulting.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+      <div class="svc-card" onclick="sw('s-lastmile')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&auto=format&q=75" alt="Last mile" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">04</div><h3>Last Mile Delivery</h3><p>Fast, flexible final-leg delivery with ePOD and branded customer tracking.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+      <div class="svc-card" onclick="sw('s-customs')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&auto=format&q=75" alt="Customs" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">05</div><h3>Customs & Trade</h3><p>Licensed brokerage, automated filing, and trade compliance advisory worldwide.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+      <div class="svc-card" onclick="sw('s-cold')">
+        <div class="svc-card-img"><img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&auto=format&q=75" alt="Cold chain" loading="lazy"/></div>
+        <div class="svc-card-body"><div class="svc-card-num">06</div><h3>Cold Chain Logistics</h3><p>GDP-certified temperature-controlled logistics for pharma, food, and biotech.</p><div class="svc-card-arrow">Explore →</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats 3 col -->
+  <div class="stats-3">
+    <div class="s3-cell"><div class="s3-num">700+</div><div class="s3-title">Fleet Vehicles</div><p class="s3-desc">Owned and maintained fleet operating across 18 countries.</p></div>
+    <div class="s3-cell"><div class="s3-num">2.8M</div><div class="s3-title">Sq Ft Warehousing</div><p class="s3-desc">Modern, WMS-connected storage across strategic locations globally.</p></div>
+    <div class="s3-cell"><div class="s3-num">4,200</div><div class="s3-title">Professionals</div><p class="s3-desc">Logistics experts dedicated to keeping your cargo moving.</p></div>
+  </div>
+
+  <!-- Quote band -->
+  <div class="quote-band">
+    <div class="quote-band-bg"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&auto=format&q=60" alt="" loading="lazy"/></div>
+    <p class="quote-text">We don't just move cargo — we move businesses forward. Every shipment carries the weight of someone's ambition, and we treat it that way.</p>
+    <p class="quote-author">— Khalid Al-Mansouri, Founder & Chairman, Swift Cargo Group</p>
+  </div>
+
+  <!-- CTA band -->
+  <div class="cta-band">
+    <div class="cta-band-img">
+      <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&auto=format&q=80" alt="Cargo aircraft" loading="lazy"/>
+    </div>
+    <div class="cta-band-content">
+      <div class="tag">Ready to Ship?</div>
+      <h2 style="color:var(--cream)">Let's Build Your <span style="font-style:italic;font-family:var(--ff-inst);color:var(--gold)">Logistics</span> Solution</h2>
+      <p>Join over 2,500 businesses trusting Swift Cargo Group for reliable, professional, and globally connected logistics every day.</p>
+      <div class="cta-feats">
+        <div class="cta-feat">Air, Sea & Road Freight</div>
+        <div class="cta-feat">Warehousing & 3PL</div>
+        <div class="cta-feat">Supply Chain Management</div>
+        <div class="cta-feat">Cold Chain Certified</div>
+        <div class="cta-feat">Customs Brokerage</div>
+        <div class="cta-feat">24/7 Support</div>
+      </div>
+      <div class="cta-actions">
+        <button class="btn btn-gold" onclick="sw('contact')">Request a Quote →</button>
+        <button class="btn btn-outline" style="border-color:rgba(245,240,232,.2);color:var(--cream);" onclick="sw('services')">View Services</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-em-bar"></div>
+    <div class="footer-grid">
+      <div>
+        <div class="nav-brand" style="cursor:default"><div class="nav-brand-mark">S</div><div><div class="nav-brand-name" style="color:var(--cream)">SWIFT</div><div class="nav-brand-tag" style="color:rgba(245,240,232,.4)">Cargo Group</div></div></div>
+        <p class="footer-brand-desc">Premium logistics solutions across 130+ countries since 1998.</p>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul>
+        <li><button onclick="sw('s-freight')">Global Freight</button></li>
+        <li><button onclick="sw('s-warehouse')">Warehousing & Storage</button></li>
+        <li><button onclick="sw('s-supply')">Supply Chain</button></li>
+        <li><button onclick="sw('s-lastmile')">Last Mile Delivery</button></li>
+        <li><button onclick="sw('s-customs')">Customs & Trade</button></li>
+        <li><button onclick="sw('s-cold')">Cold Chain</button></li>
+      </ul></div>
+      <div class="footer-col"><h4>Company</h4><ul>
+        <li><button onclick="sw('home')">Home</button></li>
+        <li><button onclick="sw('about')">About Us</button></li>
+        <li><button onclick="sw('contact')">Contact</button></li>
+        <li><a href="#">Careers</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Offices</h4><ul>
+        <li><a href="#">Doha, Qatar (HQ)</a></li>
+        <li><a href="#">Dubai, UAE</a></li>
+        <li><a href="#">London, UK</a></li>
+        <li><a href="#">+974 4400 1234</a></li>
+        <li><a href="#">info@swiftcargo.com</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 <span>Swift Cargo Group</span>. All rights reserved.</p><p>Crafted for <span>precision logistics</span>.</p></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════
+     ABOUT
+══════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="page-hero">
+    <div class="ph-img"><img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&auto=format&q=80" alt="City"/></div>
+    <div class="ph-content"><div class="tag">Our Story</div><h1>About Swift<br><span class="italic">Cargo Group</span></h1><p>25 years of building the world's most trusted premium logistics network.</p></div>
+  </div>
+
+  <section class="section">
+    <div class="mission-wrap">
+      <div>
+        <div class="tag">Mission</div>
+        <h2 style="margin-bottom:20px">Why We <span class="em italic" style="font-family:var(--ff-inst)">Exist</span></h2>
+        <p style="margin-bottom:18px">Swift Cargo Group was built on a simple but powerful belief: every business deserves a logistics partner that takes their cargo as seriously as they do. Founded in Doha in 1998, we grew by being the most reliable option in every corridor we entered.</p>
+        <p style="margin-bottom:18px">Today we operate across 130+ countries, but our principles remain unchanged — proactive communication, meticulous attention to detail, and a relentless focus on delivering as promised.</p>
+        <div class="mission-img-box">
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&auto=format&q=80" alt="Port operations" loading="lazy"/>
+          <div class="mission-img-box-label">"Reliability is our<br>greatest asset."</div>
+        </div>
+      </div>
+      <div>
+        <div class="tag">Vision</div>
+        <h2 style="margin-bottom:20px">The Future We're <span class="em italic" style="font-family:var(--ff-inst)">Building</span></h2>
+        <p style="margin-bottom:18px">We are investing heavily in green logistics infrastructure — from hybrid and electric vehicle fleets to solar-powered warehouses. Our goal is to be carbon-neutral across all core operations by 2030.</p>
+        <p style="margin-bottom:18px">Technology is at the heart of our future: intelligent TMS platforms, predictive demand modelling, and blockchain-backed documentation are already in deployment across our network.</p>
+        <div class="mission-img-box">
+          <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=900&auto=format&q=80" alt="Fleet" loading="lazy"/>
+          <div class="mission-img-box-label">"Innovation drives<br>every route."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full-bleed -->
+  <div style="height:420px;overflow:hidden;position:relative;">
+    <img style="width:100%;height:100%;object-fit:cover;filter:brightness(.45) saturate(.9);" src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=1800&auto=format&q=80" alt="Warehouse scale" loading="lazy"/>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:0 5%;">
+      <div class="tag" style="border-color:rgba(200,168,75,.3);color:var(--gold);">Our Scale</div>
+      <h2 style="color:var(--cream)">2.8 Million Sq Ft of <span style="font-style:italic;font-family:var(--ff-inst);color:var(--gold)">World-Class</span> Warehousing</h2>
+      <p style="color:rgba(245,240,232,.65);max-width:500px">Strategically located facilities across 18 countries, all running on our cloud WMS platform.</p>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <section class="section">
+    <div class="tag">Core Values</div>
+    <h2 style="margin-bottom:48px">What Guides <span class="em italic" style="font-family:var(--ff-inst)">Everything</span></h2>
+    <div class="about-feature-row">
+      <div class="afr-cell"><div class="afr-icon">🎯</div><h3>Precision</h3><p>Every detail matters. From temperature logs to delivery windows, precision is non-negotiable.</p></div>
+      <div class="afr-cell"><div class="afr-icon">🤝</div><h3>Trust</h3><p>Built over 25 years of keeping promises. Trust is earned shipment by shipment, client by client.</p></div>
+      <div class="afr-cell"><div class="afr-icon">🌱</div><h3>Sustainability</h3><p>Carbon tracking, green warehouses, and a commitment to a cleaner logistics industry by 2030.</p></div>
+      <div class="afr-cell"><div class="afr-icon">💡</div><h3>Innovation</h3><p>Investing continuously in AI, IoT, and automation to keep our clients ahead of the curve.</p></div>
+    </div>
+  </section>
+
+  <div class="hr"></div>
+
+  <section class="section">
+    <div class="tag">Leadership</div>
+    <h2 style="margin-bottom:40px">The People Behind <span class="em italic" style="font-family:var(--ff-inst)">Swift</span></h2>
+    <div class="team-wrap">
+      <div class="team-card">
+        <div class="team-photo"><img src="" alt="CEO" loading="lazy"/><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(245,240,232,.9) 0%,transparent 55%);"></div></div>
+        <div class="team-info"><div class="team-name">Richards</div><div class="team-role">Founder & Chairman</div></div>
+      </div>
+      <div class="team-card">
+        <div class="team-photo"><img src="" alt="COO" loading="lazy"/><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(245,240,232,.9) 0%,transparent 55%);"></div></div>
+        <div class="team-info"><div class="team-name">Rachel </div><div class="team-role">Chief Executive Officer</div></div>
+      </div>
+      <div class="team-card">
+        <div class="team-photo"><img src="" alt="CTO" loading="lazy"/><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(245,240,232,.9) 0%,transparent 55%);"></div></div>
+        <div class="team-info"><div class="team-name">Jofrin</div><div class="team-role">Chief Operations Officer</div></div>
+      </div>
+      <div class="team-card">
+        <div class="team-photo"><img src="" alt="VP" loading="lazy"/><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(245,240,232,.9) 0%,transparent 55%);"></div></div>
+        <div class="team-info"><div class="team-name">Alnna</div><div class="team-role">VP Technology</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hr"></div>
+
+  <section class="section">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+      <div>
+        <div class="tag">Timeline</div>
+        <h2 style="margin-bottom:40px">25 Years of <span class="em italic" style="font-family:var(--ff-inst)">History</span></h2>
+        <div class="tl-wrap">
+          <div class="tl-entry"><div class="tl-yr">1998</div><div class="tl-title">Founded in Doha</div><div class="tl-desc">Started with 10 trucks and a vision for premium Gulf logistics services.</div></div>
+          <div class="tl-entry"><div class="tl-yr">2004</div><div class="tl-title">GCC Expansion</div><div class="tl-desc">Expanded to UAE, Saudi Arabia, and Kuwait. Launched air freight division.</div></div>
+          <div class="tl-entry"><div class="tl-yr">2010</div><div class="tl-title">Warehousing Launch</div><div class="tl-desc">Opened first 200,000 sq ft warehouse in Jebel Ali Free Zone, Dubai.</div></div>
+          <div class="tl-entry"><div class="tl-yr">2016</div><div class="tl-title">Global Reach</div><div class="tl-desc">Expanded to 80 countries through strategic carrier and agent partnerships.</div></div>
+          <div class="tl-entry"><div class="tl-yr">2023</div><div class="tl-title">Green Fleet Pledge</div><div class="tl-desc">Launched EV delivery fleet in GCC. Committed to carbon-neutral ops by 2030.</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="tag">Metrics</div>
+        <h2 style="margin-bottom:40px">Swift by <span class="em italic" style="font-family:var(--ff-inst)">the Numbers</span></h2>
+        <div class="nums-wrap">
+          <div class="nw-tile"><div class="nw-val">700+</div><div class="nw-label">Fleet Vehicles</div></div>
+          <div class="nw-tile"><div class="nw-val">4,200</div><div class="nw-label">Team Members</div></div>
+          <div class="nw-tile"><div class="nw-val">2.8M</div><div class="nw-label">Sq Ft Storage</div></div>
+          <div class="nw-tile"><div class="nw-val">130+</div><div class="nw-label">Countries</div></div>
+          <div class="nw-tile"><div class="nw-val">45K+</div><div class="nw-label">Annual Shipments</div></div>
+          <div class="nw-tile"><div class="nw-val">99.5%</div><div class="nw-label">On-Time Rate</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-band">
+    <div class="cta-band-img"><img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=900&auto=format&q=80" alt="Cargo ship" loading="lazy"/></div>
+    <div class="cta-band-content">
+      <div class="tag">Work With Us</div>
+      <h2 style="color:var(--cream)">Partner With <span style="font-style:italic;font-family:var(--ff-inst);color:var(--gold)">Swift</span></h2>
+      <p>Experience the difference 25 years of logistics excellence makes — from first quote to final delivery.</p>
+      <div class="cta-actions"><button class="btn btn-gold" onclick="sw('contact')">Get In Touch →</button></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-em-bar"></div>
+    <div class="footer-grid">
+      <div><div class="nav-brand" style="cursor:default"><div class="nav-brand-mark">S</div><div><div class="nav-brand-name" style="color:var(--cream)">SWIFT</div><div class="nav-brand-tag" style="color:rgba(245,240,232,.4)">Cargo Group</div></div></div><p class="footer-brand-desc">Premium logistics solutions since 1998.</p></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><button onclick="sw('s-freight')">Global Freight</button></li><li><button onclick="sw('s-warehouse')">Warehousing</button></li><li><button onclick="sw('s-supply')">Supply Chain</button></li><li><button onclick="sw('s-lastmile')">Last Mile</button></li><li><button onclick="sw('s-customs')">Customs & Trade</button></li><li><button onclick="sw('s-cold')">Cold Chain</button></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><button onclick="sw('home')">Home</button></li><li><button onclick="sw('about')">About</button></li><li><button onclick="sw('contact')">Contact</button></li></ul></div>
+      <div class="footer-col"><h4>Offices</h4><ul><li><a href="#">Doha, Qatar</a></li><li><a href="#">Dubai, UAE</a></li><li><a href="#">+974 4400 1234</a></li><li><a href="#">info@swiftcargo.com</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 <span>Swift Cargo Group</span>. All rights reserved.</p></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════
+     SERVICES
+══════════════════════════════ -->
+<div id="page-services" class="page">
+  <div class="page-hero">
+    <div class="ph-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&auto=format&q=80" alt="Port"/></div>
+    <div class="ph-content"><div class="tag">What We Offer</div><h1>Our <span class="italic">Services</span></h1><p>Six specialised service lines covering every logistics requirement — reliably, globally, professionally.</p></div>
+  </div>
+  <section class="section">
+    <div class="big-svc-grid">
+      <div class="bsg-card" onclick="sw('s-freight')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&auto=format&q=75" alt="Freight" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">01</div><h3>Global Freight</h3><p>Air, sea, and road freight with competitive rates, real-time tracking, and guaranteed delivery SLAs across 130+ countries.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+      <div class="bsg-card" onclick="sw('s-warehouse')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&auto=format&q=75" alt="Warehouse" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">02</div><h3>Warehousing & Storage</h3><p>2.8M sq ft of modern warehousing with cloud WMS, pick-and-pack, cross-docking, and bonded storage options.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+      <div class="bsg-card" onclick="sw('s-supply')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&q=75" alt="Supply chain" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">03</div><h3>Supply Chain</h3><p>4PL supply chain management, network design, demand planning, vendor management, and performance analytics.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+      <div class="bsg-card" onclick="sw('s-lastmile')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&auto=format&q=75" alt="Last mile" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">04</div><h3>Last Mile Delivery</h3><p>Same-day, next-day, and scheduled final-leg delivery with branded tracking and ePOD confirmation technology.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+      <div class="bsg-card" onclick="sw('s-customs')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&auto=format&q=75" alt="Customs" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">05</div><h3>Customs & Trade</h3><p>Licensed brokerage, FTA advisory, automated filing, and sanctions screening across 50+ jurisdictions.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+      <div class="bsg-card" onclick="sw('s-cold')">
+        <div class="bsg-img"><img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&auto=format&q=75" alt="Cold chain" loading="lazy"/></div>
+        <div class="bsg-body"><div class="bsg-num">06</div><h3>Cold Chain Logistics</h3><p>GDP-certified temperature-controlled logistics from ambient to -80°C cryogenic, with full IoT monitoring and traceability.</p><div class="bsg-link">Explore Service →</div></div>
+      </div>
+    </div>
+  </section>
+  <div class="cta-band">
+    <div class="cta-band-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=900&auto=format&q=80" alt="Trucks" loading="lazy"/></div>
+    <div class="cta-band-content">
+      <div class="tag">Get Started</div>
+      <h2 style="color:var(--cream)">Need a <span style="font-style:italic;font-family:var(--ff-inst);color:var(--gold)">Custom</span> Solution?</h2>
+      <p>Our consultants will design the right logistics setup for your business — no cookie-cutter packages.</p>
+      <div class="cta-actions"><button class="btn btn-gold" onclick="sw('contact')">Talk to an Expert →</button></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-em-bar"></div>
+    <div class="footer-grid">
+      <div><div class="nav-brand" style="cursor:default"><div class="nav-brand-mark">S</div><div><div class="nav-brand-name" style="color:var(--cream)">SWIFT</div><div class="nav-brand-tag" style="color:rgba(245,240,232,.4)">Cargo Group</div></div></div><p class="footer-brand-desc">Premium logistics solutions since 1998.</p></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><button onclick="sw('s-freight')">Global Freight</button></li><li><button onclick="sw('s-warehouse')">Warehousing</button></li><li><button onclick="sw('s-supply')">Supply Chain</button></li><li><button onclick="sw('s-lastmile')">Last Mile</button></li><li><button onclick="sw('s-customs')">Customs & Trade</button></li><li><button onclick="sw('s-cold')">Cold Chain</button></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><button onclick="sw('home')">Home</button></li><li><button onclick="sw('about')">About</button></li><li><button onclick="sw('contact')">Contact</button></li></ul></div>
+      <div class="footer-col"><h4>Offices</h4><ul><li><a href="#">Doha, Qatar</a></li><li><a href="#">Dubai, UAE</a></li><li><a href="#">+974 4400 1234</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 <span>Swift Cargo Group</span>. All rights reserved.</p></div>
+  </footer>
+</div>
+
+<!-- SERVICE DETAIL PAGES (injected by JS) -->
+<div id="page-s-freight"   class="page sd-pg"></div>
+<div id="page-s-warehouse" class="page sd-pg"></div>
+<div id="page-s-supply"    class="page sd-pg"></div>
+<div id="page-s-lastmile"  class="page sd-pg"></div>
+<div id="page-s-customs"   class="page sd-pg"></div>
+<div id="page-s-cold"      class="page sd-pg"></div>
+
+<!-- ══════════════════════════════
+     CONTACT
+══════════════════════════════ -->
+<div id="page-contact" class="page">
+  <div class="page-hero">
+    <div class="ph-img"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&auto=format&q=80" alt="Office buildings"/></div>
+    <div class="ph-content"><div class="tag">Reach Us</div><h1>Get in <span class="italic">Touch</span></h1><p>Our team is available 24 hours a day, 7 days a week. Expect a response within 2 business hours.</p></div>
+  </div>
+
+  <section class="section">
+    <div class="contact-wrap">
+      <div>
+        <div class="tag">Our Offices</div>
+        <h3 style="font-size:1.5rem;margin-bottom:28px;font-family:var(--ff-serif)">Find Us</h3>
+        <div class="contact-info">
+          <div class="ci-group"><div class="ci-label">Headquarters</div><div class="ci-value">Thrissur<br>Kerala, India</div></div>
+          <div class="ci-hr"></div>
+          <div class="ci-group"><div class="ci-label">Brach Office</div><div class="ci-value">Kochi<br>Kerala, India</div></div>
+          <div class="ci-hr"></div>
+          <div class="ci-group"><div class="ci-label">Phone</div><div class="ci-value">+91 1234567890 </div></div>
+          <div class="ci-hr"></div>
+          <div class="ci-group"><div class="ci-label">Email</div><div class="ci-value">info@swiftcargo.com<br>quotes@swiftcargo.com</div></div>
+          <div class="ci-hr"></div>
+          <div><div class="ci-label">Follow Swift</div><div class="soc-row"><a class="soc-btn" href="#">in</a><a class="soc-btn" href="#">𝕏</a><a class="soc-btn" href="#">f</a><a class="soc-btn" href="#">▶</a></div></div>
+        </div>
+        <div class="contact-office-img">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&q=80" alt="Office" loading="lazy"/>
+          <div class="office-img-label">"Swift  Headquarters"</div>
+        </div>
+      </div>
+      <div>
+        <div class="tag">Send a Message</div>
+        <div class="form-wrap">
+          <div class="form-head">Request a Quote or Enquiry</div>
+          <div class="cform">
+            <div class="frow">
+              <div class="field"><label>First Name *</label><input type="text" placeholder="Your first name" id="xfn"/></div>
+              <div class="field"><label>Last Name *</label><input type="text" placeholder="Your last name" id="xln"/></div>
+            </div>
+            <div class="frow">
+              <div class="field"><label>Email Address *</label><input type="email" placeholder="you@company.com" id="xem"/></div>
+              <div class="field"><label>Phone Number</label><input type="tel" placeholder="+974 XXXX XXXX" id="xph"/></div>
+            </div>
+            <div class="field"><label>Company Name</label><input type="text" placeholder="Your organisation" id="xco"/></div>
+            <div class="field"><label>Service of Interest</label>
+              <select id="xsv">
+                <option value="">— Select a service —</option>
+                <option>Global Freight</option><option>Warehousing & Storage</option>
+                <option>Supply Chain</option><option>Last Mile Delivery</option>
+                <option>Customs & Trade</option><option>Cold Chain Logistics</option>
+                <option>General Enquiry</option>
+              </select>
+            </div>
+            <div class="field"><label>Your Message *</label><textarea rows="5" placeholder="Tell us about your logistics needs, shipment details, or questions..." id="xms"></textarea></div>
+            <div class="form-foot">
+              <span class="form-note">We respond within 2 business hours.</span>
+              <button class="btn btn-em" onclick="xSubmit()">Send Message →</button>
+            </div>
+            <div class="fsuccess" id="xfs">✓ Thank you — your message has been received. We'll be in touch shortly.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-wrap">
+      <img src="" alt=" aerial" loading="lazy"/>
+      <div class="map-pin"><div class="pin">📍</div><p>Kochi,Kerala</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-em-bar"></div>
+    <div class="footer-grid">
+      <div><div class="nav-brand" style="cursor:default"><div class="nav-brand-mark">S</div><div><div class="nav-brand-name" style="color:var(--cream)">SWIFT</div><div class="nav-brand-tag" style="color:rgba(245,240,232,.4)">Cargo Group</div></div></div><p class="footer-brand-desc">Premium logistics solutions since 1998.</p></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><button onclick="sw('s-freight')">Global Freight</button></li><li><button onclick="sw('s-warehouse')">Warehousing</button></li><li><button onclick="sw('s-supply')">Supply Chain</button></li><li><button onclick="sw('s-lastmile')">Last Mile</button></li><li><button onclick="sw('s-customs')">Customs & Trade</button></li><li><button onclick="sw('s-cold')">Cold Chain</button></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><button onclick="sw('home')">Home</button></li><li><button onclick="sw('about')">About</button></li><li><button onclick="sw('contact')">Contact</button></li></ul></div>
+      <div class="footer-col"><h4>Offices</h4><ul><li><a href="#">Kochi</a></li><li><a href="#">Thrissur</a></li><li><a href="#">+974 4400 1234</a></li><li><a href="#">info@swiftcargo.com</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 <span>Swift Cargo Group</span>. All rights reserved.</p></div>
+  </footer>
+</div>
+
+<script>
+/* ─ Navigation ─ */
+const ALLPG=['home','about','services','s-freight','s-warehouse','s-supply','s-lastmile','s-customs','s-cold','contact'];
+function sw(p){
+  ALLPG.forEach(id=>{const el=document.getElementById('page-'+id);if(el)el.classList.remove('active');});
+  const t=document.getElementById('page-'+p);
+  if(t){t.classList.add('active');window.scrollTo({top:0,behavior:'instant'});}
+  document.querySelectorAll('[data-page]').forEach(el=>{
+    el.classList.remove('active');
+    if(el.dataset.page===p||(p.startsWith('s-')&&el.dataset.page==='services'))el.classList.add('active');
+  });
+}
+function togMob(){document.getElementById('mobnav').classList.toggle('open');}
+
+/* ─ Service data ─ */
+const SD={
+  's-freight':{num:'01',h1:'Global',h1em:'Freight',hero:'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&auto=format&q=75',tag:'Service 01',tagline:'Multi-modal freight solutions across 130+ countries — reliable, trackable, and competitively priced.',b1:'Swift Cargo Group operates a global multi-modal freight network spanning air, sea, and road. Whether you need express air freight for urgent cargo or cost-optimised LCL sea freight, our freight team handles every detail from booking to final delivery.',b2:'Our carrier-neutral approach ensures you always get the most competitive routing. We partner with 300+ airlines and shipping lines, giving us priority access to capacity even during peak seasons.',feats:['FTL & LTL road freight across the GCC, Europe, and Asia','Air freight with express (next-day) and economy options','Sea freight: FCL, LCL, breakbulk, and project cargo','Real-time GPS tracking with milestone alerts','Cargo insurance and risk advisory included','Charter services for oversized or time-critical loads'],p1t:'Key Performance',p1i:['99.5% on-time delivery rate','2-hour quote response','Cargo cover up to $5M','300+ carrier partnerships','24/7 freight operations desk'],p2t:'Freight Modes',p2i:['Road — FTL & LTL','Air — Express & Economy','Sea — FCL & LCL','Rail — Cross-border Europe/Asia','Multimodal combinations'],ct:'Request Freight Quote',cd:'Competitive rates. Fast response. Global reach.',others:['s-warehouse','s-supply','s-lastmile']},
+  's-warehouse':{num:'02',h1:'Warehousing &',h1em:'Storage',hero:'https://images.unsplash.com/photo-1553413077-190dd305871c?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1591792111137-5b8219d5fad6?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1553413077-190dd305871c?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&auto=format&q=75',tag:'Service 02',tagline:'2.8 million sq ft of smart, connected warehousing with full 3PL capabilities across 18 countries.',b1:'Swift\'s warehousing division operates one of the most advanced logistics real estate portfolios in the region. Every facility runs on our cloud-based WMS platform, giving clients real-time inventory visibility, order management, and performance analytics.',b2:'From bonded free-zone storage to fast-turnaround e-commerce fulfillment centers, we have the infrastructure and expertise to handle any storage and logistics requirement.',feats:['Dedicated and shared warehouse options with flexible terms','Cloud WMS with real-time client dashboard and reporting','Pick-and-pack, kitting, labelling and value-added services','Cross-docking for fast-flow cargo with minimal dwell time','Bonded and free-zone warehouse facilities globally','24/7 security with CCTV, access control, and fire systems'],p1t:'Facility Specs',p1i:['2.8M sq ft total capacity','Rack heights to 14m','Ambient, chilled & frozen','18 strategic locations','ISO 9001 certified'],p2t:'3PL Services',p2i:['Pick & pack fulfillment','Returns management','Kitting & assembly','Labelling & repackaging','Inventory reporting'],ct:'Storage Enquiry',cd:'Tell us your requirements for a tailored quote.',others:['s-freight','s-supply','s-cold']},
+  's-supply':{num:'03',h1:'Supply Chain',h1em:'Management',hero:'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&auto=format&q=75',tag:'Service 03',tagline:'4PL supply chain management — from network design through execution, analytics, and continuous improvement.',b1:'Our supply chain consulting and management practice has helped over 400 companies redesign, optimise, and scale their logistics networks. We act as a neutral 4PL partner, orchestrating all providers under a single SLA.',b2:'Using our proprietary analytics platform, we identify cost-reduction opportunities, model demand scenarios, and build resilient networks that perform under pressure.',feats:['Supply chain network design and modelling','Demand planning and inventory optimisation','Vendor management and performance scorecarding','4PL orchestration across all logistics providers','ERP, TMS and WMS integration services','Real-time KPI dashboards and executive reporting'],p1t:'Typical Results',p1i:['Up to 32% cost reduction','28% lead time improvement','45% inventory reduction','Higher service levels','Risk-resilient networks'],p2t:'Methodology',p2i:['Assess: Audit current network','Design: Model the optimum','Deploy: Implement changes','Optimise: Continuous KPI review'],ct:'Free Consultation',cd:'Book a complimentary 60-min supply chain review.',others:['s-freight','s-warehouse','s-customs']},
+  's-lastmile':{num:'04',h1:'Last Mile',h1em:'Delivery',hero:'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=500&auto=format&q=75',tag:'Service 04',tagline:'Fast, flexible, and branded final-leg delivery — the experience your customers will remember.',b1:'The last mile is the most visible part of logistics to your customers. Swift Last Mile Delivery combines smart route optimisation, real-time driver visibility, and a fully branded delivery experience to help businesses exceed expectations.',b2:'Our platform integrates with your OMS via API, automates dispatch and communication, and provides analytics that help you reduce failed deliveries and improve satisfaction scores.',feats:['Same-day delivery available in major GCC cities','Next-day and scheduled time-slot delivery options','Branded tracking page with live driver location','Electronic proof of delivery (ePOD) — photo and signature','Automated re-delivery and parcel locker integration','B2B bulk delivery with site-specific protocols'],p1t:'Delivery Options',p1i:['Same-day (select cities)','Next-day nationwide','Scheduled time slots','Weekend delivery','B2B site deliveries'],p2t:'Platform Features',p2i:['OMS/ERP API integration','Branded tracking portal','SMS & email notifications','Delivery analytics dashboard','Returns management portal'],ct:'Go Live Today',cd:'Integrate Swift Last Mile in under 2 weeks.',others:['s-freight','s-warehouse','s-supply']},
+  's-customs':{num:'05',h1:'Customs &',h1em:'Trade',hero:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&auto=format&q=75',tag:'Service 05',tagline:'Licensed customs brokerage in 50+ markets — removing cross-border complexity so you can focus on growth.',b1:'International trade compliance is complex, costly, and carries real legal risk. Swift Customs & Trade provides complete brokerage services across 50+ jurisdictions, combining experienced brokers with our automated filing platform to clear cargo faster and at lower cost.',b2:'Our trade advisory team stays ahead of tariff changes, sanctions updates, and FTA eligibility windows — proactively advising clients on how to minimise duties and avoid compliance penalties.',feats:['Licensed customs brokerage in 50+ countries','Automated import and export declaration filing','HS tariff classification and duty optimisation advisory','Free Trade Agreement (FTA) utilisation support','AEO / trusted trader programme management','Restricted party and sanctions screening','Duty drawback recovery programme'],p1t:'Markets Covered',p1i:['GCC & MENA region','European Union','USA & Canada','Southeast Asia','East & West Africa'],p2t:'Compliance Services',p2i:['Automated filing system','Denied party screening','Duty drawback recovery','FTA eligibility checks','Regulatory update alerts'],ct:'Free Compliance Review',cd:'Request a no-obligation trade compliance health check.',others:['s-freight','s-supply','s-cold']},
+  's-cold':{num:'06',h1:'Cold Chain',h1em:'Logistics',hero:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1800&auto=format&q=80',mid:'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1000&auto=format&q=80',mid2:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1000&auto=format&q=80',sb:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&auto=format&q=75',tag:'Service 06',tagline:'GDP-certified temperature-controlled logistics — maintaining product integrity from origin to patient.',b1:'Swift Cold Chain Logistics delivers end-to-end temperature management for pharmaceutical companies, biotech firms, food manufacturers, and grocery retailers. Our GDP-certified operations span the full temperature spectrum with zero excursion tolerance.',b2:'Every cold chain shipment is monitored continuously via our IoT sensor network, with automated alerts, real-time temperature dashboards, and complete documentation packages for regulatory submissions.',feats:['Ambient (+15–25°C) through cryogenic (-80°C) capability','GDP-certified warehouses and refrigerated vehicles','IoT continuous monitoring with real-time excursion alerts','Passive packaging: dry ice, gel packs, and PCM solutions','Full batch traceability and temperature certificates','IATA CEIV Pharma certified air freight corridors','Halal-certified cold storage facilities available'],p1t:'Temperature Ranges',p1i:['Ambient: +15°C to +25°C','Chilled: +2°C to +8°C','Frozen: -18°C to -25°C','Deep Frozen: -40°C','Cryogenic: -80°C'],p2t:'Certifications',p2i:['GDP compliant operations','ISO 9001:2015 certified','HACCP certified facilities','IATA CEIV Pharma','Halal storage certified'],ct:'Cold Chain Quote',cd:'Describe your temperature-sensitive cargo for a quote.',others:['s-freight','s-warehouse','s-customs']}
+};
+
+const SN={'s-freight':'Global Freight','s-warehouse':'Warehousing & Storage','s-supply':'Supply Chain','s-lastmile':'Last Mile Delivery','s-customs':'Customs & Trade','s-cold':'Cold Chain Logistics'};
+const SI={'s-freight':'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&auto=format&q=70','s-warehouse':'https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&auto=format&q=70','s-supply':'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&auto=format&q=70','s-lastmile':'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=500&auto=format&q=70','s-customs':'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&auto=format&q=70','s-cold':'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&auto=format&q=70'};
+
+const footerHTML=`<footer><div class="footer-em-bar"></div><div class="footer-grid"><div><div class="nav-brand" style="cursor:default"><div class="nav-brand-mark">S</div><div><div class="nav-brand-name" style="color:var(--cream)">SWIFT</div><div class="nav-brand-tag" style="color:rgba(245,240,232,.4)">Cargo Group</div></div></div><p class="footer-brand-desc">Premium logistics solutions since 1998.</p></div><div class="footer-col"><h4>Services</h4><ul><li><button onclick="sw('s-freight')">Global Freight</button></li><li><button onclick="sw('s-warehouse')">Warehousing</button></li><li><button onclick="sw('s-supply')">Supply Chain</button></li><li><button onclick="sw('s-lastmile')">Last Mile</button></li><li><button onclick="sw('s-customs')">Customs & Trade</button></li><li><button onclick="sw('s-cold')">Cold Chain</button></li></ul></div><div class="footer-col"><h4>Company</h4><ul><li><button onclick="sw('home')">Home</button></li><li><button onclick="sw('about')">About</button></li><li><button onclick="sw('contact')">Contact</button></li></ul></div><div class="footer-col"><h4>Contact</h4><ul><li><a href="#">+974 4400 1234</a></li><li><a href="#">info@swiftcargo.com</a></li><li><a href="#">Doha, Qatar</a></li></ul></div></div><div class="footer-bottom"><p>© 2025 <span>Swift Cargo Group</span>. All rights reserved.</p></div></footer>`;
+
+function buildSD(id){
+  const d=SD[id];
+  const others=d.others.map(k=>`
+    <div class="oc-card" onclick="sw('${k}')">
+      <div class="oc-img"><img src="${SI[k]}" alt="${SN[k]}" loading="lazy"/></div>
+      <div class="oc-body"><h3>${SN[k]}</h3><p>Explore how Swift Cargo can help with ${SN[k].toLowerCase()}.</p></div>
+    </div>`).join('');
+
+  document.getElementById('page-'+id).innerHTML=`
+    <div class="page-hero">
+      <div class="ph-img"><img src="${d.hero}" alt="${d.h1}" loading="lazy"/></div>
+      <div class="ph-content">
+        <div class="tag">${d.tag}</div>
+        <h1>${d.h1} <span class="italic">${d.h1em}</span></h1>
+        <p>${d.tagline}</p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="sd-wrap">
+        <div class="sd-body">
+          <div class="tag" style="display:inline-flex;margin-bottom:16px">Overview</div>
+          <h3 style="font-family:var(--ff-serif);font-size:1.5rem;margin-bottom:16px">Delivering Across Every Corridor</h3>
+          <p>${d.b1}</p>
+          <div class="sd-img-box"><img src="${d.mid}" alt="" loading="lazy"/></div>
+          <p>${d.b2}</p>
+          <ul class="sd-feat-list">${d.feats.map(f=>`<li>${f}</li>`).join('')}</ul>
+          <div class="sd-img-box"><img src="${d.mid2}" alt="" loading="lazy"/></div>
+        </div>
+        <div class="sd-sidebar">
+          <div class="sb-img"><img src="${d.sb}" alt="" loading="lazy"/></div>
+          <div class="sb-panel"><h3>${d.p1t}</h3><ul class="sp-list">${d.p1i.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+          <div class="sb-panel"><h3>${d.p2t}</h3><ul class="sp-list">${d.p2i.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+          <div class="sb-cta"><h3>${d.ct}</h3><p>${d.cd}</p><button class="btn btn-cream" onclick="sw('contact')">Get Quote →</button></div>
+        </div>
+      </div>
+      <div class="tag" style="display:inline-flex;margin-top:72px;margin-bottom:16px">More Services</div>
+      <h3 style="font-size:1.1rem;margin-bottom:28px">Also From Swift Cargo</h3>
+      <div class="oc-grid">${others}</div>
+    </section>
+    <div class="cta-band">
+      <div class="cta-band-img"><img src="${d.hero}" alt="" loading="lazy"/></div>
+      <div class="cta-band-content">
+        <div class="tag">Get Started</div>
+        <h2 style="color:var(--cream)">Ready to <span style="font-style:italic;font-family:var(--ff-inst);color:var(--gold)">Ship?</span></h2>
+        <p>Our team will respond within 2 hours with a tailored quote and logistics plan.</p>
+        <div class="cta-actions"><button class="btn btn-gold" onclick="sw('contact')">Request a Quote →</button></div>
+      </div>
+    </div>
+    ${footerHTML}`;
+}
+Object.keys(SD).forEach(buildSD);
+
+/* ─ Contact form ─ */
+function xSubmit(){
+  const fn=document.getElementById('xfn').value.trim();
+  const em=document.getElementById('xem').value.trim();
+  const ms=document.getElementById('xms').value.trim();
+  if(!fn||!em||!ms){alert('Please fill in all required fields.');return;}
+  document.getElementById('xfs').classList.add('show');
+  ['xfn','xln','xem','xph','xco','xms'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('xsv').value='';
+  setTimeout(()=>document.getElementById('xfs').classList.remove('show'),6000);
+}
+
+sw('home');
+</script>
+</body>
+</html>
